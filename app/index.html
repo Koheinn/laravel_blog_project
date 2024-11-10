@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API</title>
+</head>
+<body>
+    <form>
+        <input type="text" id="name" placeholder="Name">
+        <button>Add</button>
+    </form>
+    <ul id="list"></ul>
+    <script>
+        const api="http://localhost:8000/api/categories";
+        const token="1|G9rZblOkXVndH8brsBtRkkbKOzBBY128QJGajn62505d831b";
+        fetch(api,{
+            headers:{
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        .then(res=>res.json())
+        .then(data=>data.map(item=>createItem(item)));
+        document.querySelector("form").onsubmit=e=>{
+            e.preventDefault();
+            const name=document.querySelector("#name").value;
+            if(name=="") return false;
+            fetch(api,{
+                method: 'POST',
+                body: JSON.stringify({name}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            .then(res=>res.json())
+            .then(item=>createItem(item));
+            e.currentTarget.reset();
+        }
+        function createItem(item){
+            const li=document.createElement("li");
+            li.textContent=item.name;
+            document.querySelector("#list").appendChild(li);
+        }
+    </script>
+</body>
+</html>
